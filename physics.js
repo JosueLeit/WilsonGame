@@ -13,13 +13,21 @@ const Physics = (entities, { touches, time, dispatch }) => {
     .forEach(t => {
       Matter.Body.setVelocity(entities.Wilson.body, {
         x: 0,
-        y: -8
+        y: -7
       })
     })
 
   Matter.Engine.update(engine, time.delta)
 
   for (let index = 1; index <= 2; index++) {
+    if (
+      entities[`ObstacleTop${index}`].body.bounds.max.x <= 50 &&
+      !entities[`ObstacleTop${index}`].point
+    ) {
+      entities[`ObstacleTop${index}`].point = true
+      dispatch({ type: 'new_point' })
+    }
+
     if (entities[`ObstacleTop${index}`].body.bounds.max.x <= 0) {
       const pipeSizePos = getPipeSizePosPair(windowWidth * 0.9)
 
@@ -40,7 +48,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
     })
   }
   Matter.Events.on(engine, 'collisionStart', event => {
-    dispatch: ({ type: 'game_over' })
+    dispatch({ type: 'game_over' })
   })
   return entities
 }
